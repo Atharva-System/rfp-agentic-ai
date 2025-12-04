@@ -2,7 +2,7 @@
   
 # 🚀 RFP Agentic AI Platform
 
-> **Enterprise-Grade AI-Powered RFP Response Generation System**
+ **Enterprise-Grade AI-Powered RFP Response Generation System**
 
 [![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115.8-009688?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
