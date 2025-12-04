@@ -1,0 +1,11 @@
+.venv/
+.env
+__pycache__/
+.DS_Store
+*.log
+report*.md
+.knowledge/
+
+.knowledge/
+knowledge
+knowledge_extract_text

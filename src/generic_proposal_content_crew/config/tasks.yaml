@@ -1,0 +1,348 @@
+### File: src/generic_proposal_content_crew/config/tasks.yaml
+
+analyze_section:
+  description: >
+    Analyze the RFP section to determine:
+    - Section type and requirements
+    - Required specialized agent
+    - Key compliance points
+    - Content priorities
+
+    Input:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+    Output should be a JSON object with:
+    - task_type: One of ["technical", "management", "resume", "past_performance", "generic"]
+    - is_research: boolean indicating if research is needed
+    - reasoning: Brief explanation of the decision
+  agent: manager_agent
+  expected_output: >
+    A JSON object containing:
+    {
+      "task_type": "string",  // One of: technical, management, resume, past_performance, generic
+      "is_research": boolean,  // Whether research is needed
+      "reasoning": "string"    // Brief explanation of the decision
+    }
+
+delegate_to_specialist:
+  description: >
+    Delegate the section to the appropriate specialized agent based on analysis.
+    Input:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+  agent: generic_research_agent
+  expected_output: >
+    Delegation confirmation and initial approach plan.
+
+generic_research_task:
+  description: >
+    Research requirements and specifications for any section type:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+    Focus on:
+    - Section-specific requirements
+    - Implementation details
+    - Capabilities and qualifications
+    - Compliance requirements
+  agent: generic_research_agent
+  expected_output: >
+    Comprehensive research data and specifications.
+
+generic_writing_task:
+  description: >
+    Write proposal content for any section type:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+    - Refinement Prompt: <<< {refinement_prompt} >>>
+
+    Ensure:
+    - Output must be a valid JSON object with the following fields only:
+      - content: string (the generated proposal content)
+      - source_mapping: [string] (list of RFP references)
+      - win_theme_alignment: [string] (list of win theme names/IDs)
+    - Use double quotes for all strings
+    - Do not include trailing commas
+    - Output only the JSON object, nothing else
+  agent: generic_writer_agent
+  expected_output: >
+    {
+      "content": "string",
+      "source_mapping": ["string"],
+      "win_theme_alignment": ["string"]
+    }
+
+technical_research_task:
+  description: >
+    Research technical requirements and specifications:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+    Focus on:
+    - Technical specifications
+    - Implementation details
+    - Technical capabilities
+    - Innovation and methodology
+  agent: technical_research_agent
+  expected_output: >
+    Comprehensive technical research data and specifications.
+
+technical_writing_task:
+  description: >
+    Production-Ready CrewAI Agent Instructions for Technical Volume Section Generation:
+    
+    Overview and Agent Role:
+    This agent autonomously drafts technical volume sections for U.S. federal government proposals, operating as a Content Writer within a multi-agent CrewAI framework. The agent receives a structured JSON object for a proposal section (fields: section_number, heading, instructions_to_writer, source_mapping, win_theme_alignment) and produces a well-structured, compliant, and compelling draft response in JSON format, ready for review by proposal managers or SMEs.
+
+    Input Structure and Section Context:
+    - Each input is a JSON object defining a specific proposal section to write, with fields:
+      * section_number: Section identifier (e.g., "3.2.1").
+      * heading: Section title (e.g., "Technical Approach to Cybersecurity").
+      * instructions_to_writer: Guidance from RFP Section L (instructions to offerors) for this section, outlining evaluator expectations and content/format requirements.
+      * source_mapping: References to solicitation (Section L, Section M, SOW/Requirements) that apply to this section. These must be explicitly addressed.
+      * win_theme_alignment: Key win themes or discriminators to weave into the section.
+    - The agent must interpret instructions and source mapping carefully, ensuring the narrative is explicitly responsive to all mapped requirements and evaluation criteria.
+
+    Agent Resources and Knowledge Bases:
+    - Internal Capability Knowledge Base: Vector database and document repository with past performance, reusable content, resumes, proprietary tools, methodologies, and certifications. Use this for evidence of qualifications and experience, citing internal sources as appropriate.
+    - External Web Content: Public web sources (agency mission, strategic plans, news, GAO reports, federal mandates, best practices, etc.) to ground the proposal in the agency's mission and federal context. Cite all external sources.
+
+    Objectives for the Draft Response:
+    - Address all requirements from instructions_to_writer and source_mapping, echoing RFP language for compliance.
+    - Align with evaluation criteria (Section M) and use RFP structure/terminology for traceability.
+    - Integrate win themes and differentiators as golden threads, substantiating with evidence and citations.
+    - Maintain a formal, federal-compliant tone (FAR/DFARS), avoiding marketing hype and unsubstantiated claims.
+    - Be compelling and customer-focused, tying the solution to the agency's mission, pain points, and value-added benefits.
+
+    Drafting Process and Quality Assurance:
+    1. Analyze instructions_to_writer and source_mapping to create a requirements checklist and mini-outline.
+    2. Research internal and external sources for evidence, context, and best practices. Use internal knowledge first, then supplement with authoritative web content as needed.
+    3. Draft a compliant, compelling narrative in Markdown (within a JSON string), using headings, subheadings, bullet points, and lists as appropriate for clarity and alignment with RFP instructions.
+    4. The 'content' attribute in the output must be a single, well-structured paragraph (not multiple paragraphs or lists), and should be as detailed and comprehensive as possible while remaining concise and focused.
+    5. Insert citation markers (e.g., 【1】) in the text for every claim or fact from a source, and build a citations array. Each citation must include:
+      - source_type: "internal" or "web"
+      - reference: concise identifier (document name, URL, etc.)
+      - description: brief description of what was cited
+    6. Ensure every citation marker in the text matches an entry in the citations array, and vice versa. Use sequential numbering or a consistent scheme.
+    7. Review the draft for completeness, ensuring every requirement and source_mapping reference is addressed, and all win themes are reflected where relevant.
+    8. Review for tone, style, and consistency (federal, professional, customer-focused, no marketing jargon, consistent terminology).
+    9. Validate the JSON structure and citation integrity before finalizing. Output must be valid JSON (no trailing commas, proper quoting/escaping, all required fields present).
+
+    Additional Agent Behaviors:
+    - Be proactive in researching unfamiliar terms or mandates, using web search as needed.
+    - Balance thoroughness with efficiency, leveraging internal knowledge before extensive web research.
+    - Collaborate with other agents by respecting input outlines and formatting output for easy review.
+    - Ensure FAR/DFARS compliance and avoid non-compliant or unsubstantiated content.
+    - Use reusable templates only as a starting point, customizing for the specific RFP section and agency.
+    - Maintain consistency across sections in terminology, acronyms, and style.
+    - Validate all facts and cite credible sources (prefer .gov/.edu for web facts).
+    - Conduct a final JSON validation to ensure output integrity.
+
+    Ensure:
+    - Output must be a valid JSON object with the following fields only:
+      - content: string (the generated proposal content)
+      - source_mapping: [string] (list of RFP references)
+      - win_theme_alignment: [string] (list of win theme names/IDs)
+    - The 'content' field must be a single, detailed, well-structured paragraph, not multiple paragraphs or lists.
+    - Use double quotes for all strings
+    - Do not include trailing commas
+    - Output only the JSON object, nothing else
+  agent: technical_writer_agent
+  expected_output: >
+    {
+      "content": "string",
+      "source_mapping": ["string"],
+      "win_theme_alignment": ["string"]
+    }
+
+management_research_task:
+  description: >
+    Research management and organizational aspects:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+    Focus on:
+    - Organizational structure
+    - Management approach
+    - Quality control
+    - Risk management
+  agent: management_research_agent
+  expected_output: >
+    Comprehensive management research data.
+
+management_writing_task:
+  description: >
+    Write management proposal content:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+    - Refinement Prompt: <<< {refinement_prompt} >>>
+
+    Ensure:
+    - Output must be a valid JSON object with the following fields only:
+      - content: string (the generated proposal content)
+      - source_mapping: [string] (list of RFP references)
+      - win_theme_alignment: [string] (list of win theme names/IDs)
+    - Use double quotes for all strings
+    - Do not include trailing commas
+    - Output only the JSON object, nothing else
+    - Clear management approach
+    - Organizational capabilities
+    - Quality assurance
+    - Risk mitigation
+  agent: management_writer_agent
+  expected_output: >
+    {
+      "content": "string",
+      "source_mapping": ["string"],
+      "win_theme_alignment": ["string"]
+    }
+
+resume_research_task:
+  description: >
+    Research personnel qualifications and experience:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+    Focus on:
+    - Key personnel qualifications
+    - Relevant experience
+    - Certifications
+    - Specialized skills
+  agent: resume_research_agent
+  expected_output: >
+    Comprehensive personnel research data.
+
+resume_writing_task:
+  description: >
+    Write personnel and resume content:
+    - Section: <<< {section} >>>
+    - Subsection: <<< {subsection} >>>
+    - Requirement: <<< {requirement} >>>
+    - Section Purpose: <<< {section_purpose} >>>
+    - Instructions to Writer: <<< {instructions_to_writer} >>>
+    - Source Mapping: <<< {source_mapping} >>>
+    - Win Theme Alignment: <<< {win_theme_alignment} >>>
+    - Refinement Prompt: <<< {refinement_prompt} >>>
+
+    Ensure:
+    - Output must be a valid JSON object with the following fields only:
+      - content: string (the generated proposal content)
+      - source_mapping: [string] (list of RFP references)
+      - win_theme_alignment: [string] (list of win theme names/IDs)
+    - Use double quotes for all strings
+    - Do not include trailing commas
+    - Output only the JSON object, nothing else
+    - Highlight key qualifications
+    - Emphasize relevant experience
+    - Showcase specialized skills
+    - Demonstrate team capabilities
+  agent: resume_writer_agent
+  expected_output: >
+    {
+      "content": "string",
+      "source_mapping": ["string"],
+      "win_theme_alignment": ["string"]
+    }
+
+past_performance_research_task:
+  description: >
+     Research past performance and references:
+        - Section: <<< {section} >>>
+        - Subsection: <<< {subsection} >>>
+        - Requirement: <<< {requirement} >>>
+        - Section Purpose: <<< {section_purpose} >>>
+        - Instructions to Writer: <<< {instructions_to_writer} >>>
+        - Source Mapping: <<< {source_mapping} >>>
+        - Win Theme Alignment: <<< {win_theme_alignment} >>>
+
+      Focus on:
+        - Relevant past projects
+        - Client references
+        - Performance metrics
+        - Success stories
+        - CPARS quotes and results
+        - Binary criteria (recency, size, contract type)
+
+      Output: Structured project summaries and supporting evidence for writer agent.
+  agent: past_performance_research_agent
+  expected_output: >
+    Structured JSON with selected project summaries and citations.
+
+past_performance_writing_task:
+  description: >
+    Write past performance content:
+        - Section: <<< {section} >>>
+        - Subsection: <<< {subsection} >>>
+        - Requirement: <<< {requirement} >>>
+        - Section Purpose: <<< {section_purpose} >>>
+        - Instructions to Writer: <<< {instructions_to_writer} >>>
+        - Source Mapping: <<< {source_mapping} >>>
+        - Win Theme Alignment: <<< {win_theme_alignment} >>>
+        - Research Summary: <<< {research_summary} >>>
+
+      Ensure:
+        - All RFP instructions are followed.
+        - Each required past performance element is included.
+        - Narrative is clear, compliant, markdown-formatted.
+        - Each fact has a citation (internal or web).
+        - Output is a valid JSON object:
+            section_number: string
+            heading: string
+            response_draft: markdown-formatted string
+            citations:
+              - source_type: "internal" or "web"
+                reference: "filename or URL"
+                description: "short description of source"
+
+      Use evaluator-focused tone. Be specific, concise, and persuasive.
+      Do not output anything but the final JSON object.
+  agent: past_performance_writer_agent
+  expected_output: >
+    {
+      "content": "string",
+      "source_mapping": ["string"],
+      "win_theme_alignment": ["string"]
+    }
+
