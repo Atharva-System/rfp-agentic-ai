@@ -1,4 +1,4 @@
-# RFPAI-POC
+# RFPAI
 
 Proof of concept for AI Agents.
 
