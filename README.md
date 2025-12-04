@@ -1,6 +1,4 @@
-# RFPAI
 
-Proof of concept for AI Agents.
 
 ## Setup
 
@@ -32,7 +30,7 @@ AWS_DEFAULT_REGION=us-east-1
 AWS_S3_BUCKET_NAME=<Bucket for knowledge base>
 AWS_OPENSEARCH_COLLECTION_ARN=<OpenSearch collection for knowledge base>
 AWS_KNOWLEDGE_BASE_ROLE_ARN=<Knowledge base role used by Bedrock>
-AWS_EMBEDDING_MODEL_ARN=arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0
+AWS_EMBEDDING_MODEL_ARN=<>
 AWS_EMBEDDING_MODEL_DIMENSIONS=1024
 AWS_ENVIRONMENT=Development
 AWS_PROJECT=rfpai-agents
